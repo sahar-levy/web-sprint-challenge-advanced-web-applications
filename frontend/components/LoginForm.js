@@ -18,7 +18,10 @@ export default function LoginForm(props) {
   const onSubmit = evt => {
     evt.preventDefault()
     // ✨ implement
-    login();
+    login({
+      username: values.username.trim(),
+      password: values.password.trim()
+    });
   }
 
   const isDisabled = () => {
