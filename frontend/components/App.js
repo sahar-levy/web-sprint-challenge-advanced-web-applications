@@ -18,24 +18,60 @@ export default function App() {
 
   // ✨ Research `useNavigate` in React Router v.6
   const navigate = useNavigate()
-  const redirectToLogin = () => { /* ✨ implement */ }
-  const redirectToArticles = () => { /* ✨ implement */ }
+  const redirectToLogin = () => navigate('/login') 
+  const redirectToArticles = () => navigate('/articles')
 
   const logout = () => {
     // ✨ implement
     // If a token is in local storage it should be removed,
+    localStorage.removeItem('token')
     // and a message saying "Goodbye!" should be set in its proper state.
+    setMessage('Goodbye!')
     // In any case, we should redirect the browser back to the login screen,
     // using the helper above.
+    redirectToLogin()
   }
 
   const login = ({ username, password }) => {
     // ✨ implement
     // We should flush the message state, turn on the spinner
+    setMessage('')
+    setSpinnerOn(true)
     // and launch a request to the proper endpoint.
     // On success, we should set the token to local storage in a 'token' key,
     // put the server success message in its proper state, and redirect
     // to the Articles screen. Don't forget to turn off the spinner!
+    username = username.trim()
+    password = password.trim()
+
+    if (username.length >= 3 && password.length >= 8) {
+      fetch(loginUrl, {
+        method: 'POST',
+        body: JSON.stringify({ 
+          username, 
+          password 
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(res => {
+        if (!res.ok) {
+          throw new Error('An error occured')
+        }
+        return res.json();
+      })
+      .then(data => {
+        localStorage.setItem('token', data.token)
+        setMessage(data.message)
+        redirectToArticles()
+        setSpinnerOn(false)
+      })
+      .catch(error => {
+        setMessage(error.message)
+        setSpinnerOn(false)
+      })
+    }
   }
 
   const getArticles = () => {
