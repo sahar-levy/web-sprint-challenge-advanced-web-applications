@@ -12,16 +12,13 @@ export default function LoginForm(props) {
   
   const onChange = evt => {
     const { id, value } = evt.target
-    setValues({ ...values, [id]: value })
+    setValues(prev => ({ ...prev, [id]: value }))
   }
 
   const onSubmit = evt => {
     evt.preventDefault()
     // ✨ implement
-    login({
-      username: values.username.trim(),
-      password: values.password.trim()
-    });
+    login(values);
   }
 
   const isDisabled = () => {
@@ -31,7 +28,7 @@ export default function LoginForm(props) {
     // the button to become enabled
     return values.username.trim().length < 3 || values.password.trim().length < 8;
   }
-
+  
   return (
     <form id="loginForm" onSubmit={onSubmit}>
       <h2>Login</h2>

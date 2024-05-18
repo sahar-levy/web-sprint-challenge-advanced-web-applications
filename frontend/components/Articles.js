@@ -10,10 +10,9 @@ export default function Articles(props) {
   // we should render a Navigate to login screen (React Router v.6)
   const token = localStorage.getItem('token');
   if (!token) {
-    return <Navigate to='/login' />
+    return <Navigate to='/' />
   }
   
-
   useEffect(() => {
     // ✨ grab the articles here, on first render only
     getArticles()
