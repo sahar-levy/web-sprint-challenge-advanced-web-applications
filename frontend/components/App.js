@@ -14,13 +14,16 @@ export default function App() {
   // ✨ MVP can be achieved with these states
   const [message, setMessage] = useState('')
   const [articles, setArticles] = useState([])
-  const [currentArticleId, setCurrentArticleId] = useState()
+  const [currentArticleId, setCurrentArticleId] = useState(null)
   const [spinnerOn, setSpinnerOn] = useState(false)
 
   // ✨ Research `useNavigate` in React Router v.6
   const navigate = useNavigate()
   const redirectToLogin = () => navigate('/') 
   const redirectToArticles = () => navigate('/articles')
+
+  const currentArticle = articles.find(article => article.article_id === currentArticleId);
+
 
   const logout = () => {
     // ✨ implement
@@ -156,37 +159,37 @@ export default function App() {
     })
     .catch(error => {
         console.error('Update article error:', error);
-        setMessage(error.response ? error.response.data.message : 'Failed to update article');
+        setMessage(error.response.data.message);
         setSpinnerOn(false);
     });
   }
 
   const deleteArticle = article_id => {
     // ✨ implement
-    // setMessage('');
-    // setSpinnerOn(true);
+    setMessage('');
+    setSpinnerOn(true);
 
-    // const token = localStorage.getItem('token');
-    // if (!token) {
-    //     setSpinnerOn(false);
-    //     return setMessage('Authentication required. Please log in.');
-    // }
+    const token = localStorage.getItem('token');
+    if (!token) {
+        setSpinnerOn(false);
+        return setMessage('Authentication required. Please log in.');
+    }
 
-    // axios.delete(`${articlesUrl}/${article_id}`, {
-    //     headers: {
-    //         'Authorization': token
-    //     }
-    // })
-    // .then(response => {
-    //     setArticles(prevArticles => prevArticles.filter(art => art.article_id !== article_id));
-    //     setMessage(response.data.message);
-    //     setSpinnerOn(false);
-    // })
-    // .catch(error => {
-    //     console.error('Delete article error:', error);
-    //     setMessage(error.response.data.message);
-    //     setSpinnerOn(false);
-    // });
+    axios.delete(`${articlesUrl}/${article_id}`, {
+        headers: {
+            'Authorization': token
+        }
+    })
+    .then(response => {
+        setArticles(prevArticles => prevArticles.filter(art => art.article_id !== article_id));
+        setMessage(response.data.message);
+        setSpinnerOn(false);
+    })
+    .catch(error => {
+        console.error('Delete article error:', error);
+        setMessage(error.response.data.message);
+        setSpinnerOn(false);
+    });
   }
 
   return (
@@ -205,8 +208,8 @@ export default function App() {
           <Route exact path="/" element={<LoginForm login={login} />} />
           <Route path="/articles" element={
             <>
-              <ArticleForm postArticle={postArticle} updateArticle={updateArticle} setCurrentArticleId={setCurrentArticleId} />
-              <Articles articles={articles} getArticles={getArticles} deleteArticle={deleteArticle} setCurrentArticleId={setCurrentArticleId} />
+              <ArticleForm postArticle={postArticle} updateArticle={updateArticle} setCurrentArticleId={setCurrentArticleId} currentArticleId={currentArticleId} currentArticle={currentArticle}/>
+              <Articles articles={articles} getArticles={getArticles} deleteArticle={deleteArticle} setCurrentArticleId={setCurrentArticleId} currentArticleId={currentArticleId} currentArticle={currentArticle} />
             </>
           } />
         </Routes>
