@@ -15,7 +15,7 @@ export default function ArticleForm(props) {
     // values of the form. If it's not, we should reset the form back to initial values.
     if (currentArticle){
       setValues({
-        // article_id: setCurrentArticleId,
+        article_id: setCurrentArticleId,
         title: currentArticle.title,
         text: currentArticle.text,
         topic: currentArticle.topic
@@ -36,7 +36,7 @@ export default function ArticleForm(props) {
     // We must submit a new post or update an existing one,
     // depending on the truthyness of the `currentArticle` prop.
     evt.preventDefault()
-
+    
     try {
       if (currentArticle) {
         await updateArticle({ article_id: currentArticle.article_id, article: values });
@@ -47,6 +47,7 @@ export default function ArticleForm(props) {
       console.error('Error submitting article:', error);
     }
     setValues(initialFormValues);
+    setCurrentArticleId() // sends user back to create 
   }
 
   const isDisabled = () => {
